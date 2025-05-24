@@ -1,6 +1,6 @@
-from sqlalchemy import ForeignKey, Column, Integer, String, MetaData
-from sqlalchemy.orm import relationship, backref
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import ForeignKey, Column, Integer, String, MetaData, create_engine
+from sqlalchemy.orm import relationship, declarative_base, sessionmaker
+import os
 
 convention = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
@@ -25,9 +25,6 @@ class Company(Base):
     # Aggregate Methods
     def give_freebie(self, dev, item_name, value):
         """Creates a new Freebie associated with this company and the given dev"""
-        from sqlalchemy.orm import sessionmaker
-        from sqlalchemy import create_engine
-        
         # Create new freebie
         new_freebie = Freebie(
             item_name=item_name,
@@ -40,10 +37,9 @@ class Company(Base):
     @classmethod
     def oldest_company(cls):
         """Returns the Company instance with the earliest founding year"""
-        from sqlalchemy.orm import sessionmaker
-        from sqlalchemy import create_engine
-        
-        engine = create_engine('sqlite:///lib/freebies.db')
+        # Fix database path - use current directory
+        db_path = os.path.join(os.path.dirname(__file__), 'freebies.db')
+        engine = create_engine(f'sqlite:///{db_path}')
         Session = sessionmaker(bind=engine)
         session = Session()
         
@@ -108,3 +104,46 @@ class Freebie(Base):
     def print_details(self):
         """Returns a formatted string with freebie details"""
         return f"{self.dev.name} owns a {self.item_name} from {self.company.name}"
+
+
+# Test the models if run directly
+if __name__ == "__main__":
+    print(" Models loaded successfully!")
+    print("Available models: Company, Dev, Freebie")
+    
+    # Test database connection
+    try:
+        db_path = os.path.join(os.path.dirname(__file__), 'freebies.db')
+        engine = create_engine(f'sqlite:///{db_path}')
+        
+        # Test if we can connect
+        with engine.connect() as conn:
+            print(f" Database connection successful: {db_path}")
+            
+        # Check if tables exist
+        if os.path.exists(db_path):
+            Session = sessionmaker(bind=engine)
+            session = Session()
+            
+            try:
+                company_count = session.query(Company).count()
+                dev_count = session.query(Dev).count()
+                freebie_count = session.query(Freebie).count()
+                
+                print(f" Current data:")
+                print(f"   Companies: {company_count}")
+                print(f"   Developers: {dev_count}")
+                print(f"   Freebies: {freebie_count}")
+                
+                if company_count == 0:
+                    print(" Run 'python seed.py' to add sample data")
+                    
+            except Exception as e:
+                print(f"  Tables may not exist yet. Run 'alembic upgrade head' first")
+            finally:
+                session.close()
+        else:
+            print("  Database file doesn't exist. Run 'alembic upgrade head' and 'python seed.py'")
+            
+    except Exception as e:
+        print(f" Database connection failed: {e}")
