@@ -2,8 +2,8 @@
 
 from sqlalchemy import create_engine
 
-# from models import Company, Dev
+from models import Company, Dev
 
 if __name__ == '__main__':
-    engine = create_engine('sqlite:///freebies.db')
+    engine = create_engine('sqlite:///lib/freebies.db')
     import ipdb; ipdb.set_trace()
