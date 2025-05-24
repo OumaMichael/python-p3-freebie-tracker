@@ -245,93 +245,12 @@ python lib/Joins_delete/delete_company.py
 
 ```
 
-## Key Features
-
-### Models and Relationships
-
-- **Company**: Has many freebies, connects to devs through freebies
-- **Dev**: Has many freebies, connects to companies through freebies  
-- **Freebie**: Belongs to both a dev and a company
-
-### Available Methods
-
-#### Freebie Methods
-```python
-freebie.print_details()  # Returns formatted string
-```
-
-#### Company Methods
-```python
-company.give_freebie(dev, item_name, value)  # Creates new freebie
-Company.oldest_company()  # Class method returns oldest company
-```
-
-#### Dev Methods
-```python
-dev.received_one(item_name)  # Returns True/False
-dev.give_away(other_dev, freebie)  # Transfers freebie ownership
-```
-
-## Sample Data
-
-The seed script creates:
-
-| Company | Founded | Freebies Given |
-|---------|---------|----------------|
-| ODM     | 2005    | 2              |
-| UDA     | 2022    | 2              |
-| DCP     | 2025    | 1              |
-
-| Developer | Freebies Received | Total Value |
-|-----------|-------------------|-------------|
-| Raila     | 2                 | KSh 7,500,000 |
-| Ruto      | 2                 | KSh 1,800,000 |
-| Rigachi   | 1                 | KSh 500,000   |
-
-## Testing Commands
-
-### Quick Database Check
-```bash
-# From lib directory
-sqlite3 freebies.db "SELECT * FROM companies;"
-sqlite3 freebies.db "SELECT * FROM devs;"
-sqlite3 freebies.db "SELECT * FROM freebies;"
-```
-
-### Test Specific Relationships
-```python
-# In debug.py ipdb session
-raila = session.query(Dev).filter_by(name="Raila").first()
-print(raila.freebies)  # Show Raila's freebies
-print(raila.companies)  # Show companies Raila got freebies from
-
-odm = session.query(Company).filter_by(name="ODM").first()
-print(odm.freebies)  # Show ODM's freebies
-print(odm.devs)  # Show devs who got freebies from ODM
-```
-
-### Test Methods
-```python
-# Test freebie details
-freebie = session.query(Freebie).first()
-print(freebie.print_details())
-
-# Test company methods
-odm.give_freebie(rigachi, "ODM Cap", 50000)
-oldest = Company.oldest_company()
-
-# Test dev methods
-raila.received_one("ODM T-shirts")  # Should return True
-ruto.give_away(rigachi, wheelbarrow_freebie)
-```
-
 ## Troubleshooting
 
 ### Common Issues
 
 1. **ModuleNotFoundError: No module named 'models'**
    ```bash
-   # Make sure you're in the lib directory
    cd lib
    python debug.py
    ```
