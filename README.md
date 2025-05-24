@@ -243,19 +243,6 @@ python lib/Joins_delete/sqlite_joins.py
 # Delete specific company
 python lib/Joins_delete/delete_company.py
 
-# Check database status
-python -c "
-import sqlite3
-conn = sqlite3.connect('lib/freebies.db')
-cursor = conn.cursor()
-cursor.execute('SELECT COUNT(*) FROM companies')
-print(f'Companies: {cursor.fetchone()[0]}')
-cursor.execute('SELECT COUNT(*) FROM devs')
-print(f'Devs: {cursor.fetchone()[0]}')
-cursor.execute('SELECT COUNT(*) FROM freebies')
-print(f'Freebies: {cursor.fetchone()[0]}')
-conn.close()
-"
 ```
 
 ## Key Features
@@ -399,4 +386,4 @@ Run `python lib/Joins_delete/sqlite_joins.py` to see examples.
 ---
 
 **Note**: This project uses a political theme for sample data (ODM, UDA, DCP parties with Raila, Ruto, Rigathi as developers) for educational purposes.
-```
+
