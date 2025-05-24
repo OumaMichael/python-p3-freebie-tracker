@@ -130,7 +130,7 @@ def test_relationships_and_methods():
     print("-" * 40)
     
     # Test empty relationships
-    new_company = Company(name="Test Company", founding_year=2024)
+    new_company = Company(name="PNU", founding_year=2007)
     session.add(new_company)
     session.commit()
     print(f"New company freebies: {len(new_company.freebies)}")
